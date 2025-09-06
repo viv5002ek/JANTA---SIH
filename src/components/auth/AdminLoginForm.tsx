@@ -5,6 +5,7 @@ import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Card } from '../ui/Card';
 import { Shield } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export const AdminLoginForm: React.FC = () => {
   const { signIn } = useAuth();
@@ -14,12 +15,6 @@ export const AdminLoginForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Check admin credentials
-    if (email !== 'vivek@gmail.com' || password !== 'admin') {
-      toast.error('Invalid admin credentials');
-      return;
-    }
     
     setLoading(true);
     try {
