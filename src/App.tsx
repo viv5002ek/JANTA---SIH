@@ -2,26 +2,35 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { Header } from './components/layout/Header';
 import { AuthPage } from './components/auth/AuthPage';
 import { ProfileSetup } from './components/profile/ProfileSetup';
-import { CitizenDashboard } from './pages/CitizenDashboard';
-import { PublicAdminDashboard } from './pages/PublicAdminDashboard';
-import { AdminDashboard } from './pages/AdminDashboard';
+import { LoadingScreen } from './components/ui/LoadingScreen';
+
+// Import role-based layouts
+import { AdminLayout } from './layouts/AdminLayout';
+import { CitizenLayout } from './layouts/CitizenLayout';
+import { PublicAdminLayout } from './layouts/PublicAdminLayout';
+
+// Import pages
+import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { ManageAdmins } from './pages/admin/ManageAdmins';
+import { ReassignmentRequests } from './pages/admin/ReassignmentRequests';
+import { SystemAnalytics } from './pages/admin/SystemAnalytics';
+
+import { CitizenDashboard } from './pages/citizen/CitizenDashboard';
+import { MyReports } from './pages/citizen/MyReports';
+import { NearbyReports } from './pages/citizen/NearbyReports';
+import { ReportIssue } from './pages/citizen/ReportIssue';
+
+import { PublicAdminDashboard } from './pages/publicAdmin/PublicAdminDashboard';
+import { AssignedReports } from './pages/publicAdmin/AssignedReports';
+import { PAAnalytics } from './pages/publicAdmin/PAAnalytics';
 
 const AppContent: React.FC = () => {
   const { user, userRole, userProfile, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <h2 className="text-xl font-semibold text-gray-700">Loading JANTA...</h2>
-          <p className="text-gray-500">Connecting to secure servers</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   // Not authenticated
@@ -34,16 +43,56 @@ const AppContent: React.FC = () => {
     return <ProfileSetup />;
   }
 
-  // Main application with header
+  // Role-based routing
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-      <main>
-        {userRole === 'admin' && <AdminDashboard />}
-        {userRole === 'public_admin' && <PublicAdminDashboard />}
-        {userRole === 'citizen' && <CitizenDashboard />}
-      </main>
-    </div>
+    <Routes>
+      {/* Admin Routes */}
+      {userRole === 'admin' && (
+        <Route path="/admin/*" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="manage-admins" element={<ManageAdmins />} />
+          <Route path="reassignment-requests" element={<ReassignmentRequests />} />
+          <Route path="analytics" element={<SystemAnalytics />} />
+        </Route>
+      )}
+
+      {/* Public Admin Routes */}
+      {userRole === 'public_admin' && (
+        <Route path="/pa/*" element={<PublicAdminLayout />}>
+          <Route index element={<PublicAdminDashboard />} />
+          <Route path="reports" element={<AssignedReports />} />
+          <Route path="analytics" element={<PAAnalytics />} />
+        </Route>
+      )}
+
+      {/* Citizen Routes */}
+      {userRole === 'citizen' && (
+        <Route path="/user/*" element={<CitizenLayout />}>
+          <Route index element={<CitizenDashboard />} />
+          <Route path="my-reports" element={<MyReports />} />
+          <Route path="nearby" element={<NearbyReports />} />
+          <Route path="report" element={<ReportIssue />} />
+        </Route>
+      )}
+
+      {/* Default redirects based on role */}
+      <Route path="/" element={
+        <Navigate to={
+          userRole === 'admin' ? '/admin' :
+          userRole === 'public_admin' ? '/pa' :
+          '/user'
+        } replace />
+      } />
+      
+      {/* Catch all - redirect to appropriate dashboard */}
+      <Route path="*" element={
+        <Navigate to={
+          userRole === 'admin' ? '/admin' :
+          userRole === 'public_admin' ? '/pa' :
+          '/user'
+        } replace />
+      } />
+    </Routes>
   );
 };
 
@@ -51,27 +100,29 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <AppContent />
-        <Toaster 
-          position="top-right"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#363636',
-              color: '#fff',
-            },
-            success: {
+        <div className="min-h-screen bg-gray-50">
+          <AppContent />
+          <Toaster 
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
               style: {
-                background: '#10b981',
+                background: '#363636',
+                color: '#fff',
               },
-            },
-            error: {
-              style: {
-                background: '#ef4444',
+              success: {
+                style: {
+                  background: '#10b981',
+                },
               },
-            },
-          }}
-        />
+              error: {
+                style: {
+                  background: '#ef4444',
+                },
+              },
+            }}
+          />
+        </div>
       </Router>
     </AuthProvider>
   );

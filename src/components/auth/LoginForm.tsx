@@ -4,12 +4,15 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Card } from '../ui/Card';
+import { User, Users } from 'lucide-react';
 
 interface LoginFormProps {
+  mode: 'citizen' | 'public_admin';
   onToggleMode: () => void;
+  formType: 'login' | 'signup';
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
+export const LoginForm: React.FC<LoginFormProps> = ({ mode, onToggleMode, formType }) => {
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,20 +30,38 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     }
   };
 
+  const config = {
+    citizen: {
+      icon: User,
+      title: 'Citizen Login',
+      subtitle: 'Access your civic reporting dashboard',
+      color: 'text-green-600',
+      bgColor: 'bg-green-600'
+    },
+    public_admin: {
+      icon: Users,
+      title: 'Public Admin Login',
+      subtitle: 'Manage reports in your jurisdiction',
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-600'
+    }
+  };
+
+  const currentConfig = config[mode];
+  const Icon = currentConfig.icon;
+
   return (
     <Card className="p-8 w-full max-w-md">
       <div className="text-center mb-6">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="bg-green-600 p-3 rounded-full w-16 h-16 mx-auto mb-4"
+          className={`${currentConfig.bgColor} p-3 rounded-full w-16 h-16 mx-auto mb-4`}
         >
-          <svg className="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
+          <Icon className="h-10 w-10 text-white" />
         </motion.div>
-        <h2 className="text-2xl font-bold text-gray-900">Welcome to JANTA</h2>
-        <p className="text-gray-600 mt-2">Sign in to your account</p>
+        <h2 className="text-2xl font-bold text-gray-900">{currentConfig.title}</h2>
+        <p className="text-gray-600 mt-2">{currentConfig.subtitle}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -71,25 +92,28 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
         </Button>
       </form>
 
-      <div className="mt-6 text-center">
-        <p className="text-sm text-gray-600">
-          Don't have an account?{' '}
-          <button
-            onClick={onToggleMode}
-            className="font-medium text-green-600 hover:text-green-500 transition-colors"
-          >
-            Sign up here
-          </button>
-        </p>
-      </div>
+      {mode === 'citizen' && (
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            Don't have an account?{' '}
+            <button
+              onClick={onToggleMode}
+              className={`font-medium ${currentConfig.color} hover:opacity-80 transition-colors`}
+            >
+              Sign up here
+            </button>
+          </p>
+        </div>
+      )}
 
-      <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-        <p className="text-xs text-gray-500 text-center">
-          <strong>Admin Login:</strong><br />
-          Email: vivek@gmail.com<br />
-          Password: admin
-        </p>
-      </div>
+      {mode === 'public_admin' && (
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+          <p className="text-xs text-blue-700 text-center">
+            <strong>Note:</strong> Public Admin accounts must be activated by the State Administrator.
+            Contact your system administrator if you don't have access.
+          </p>
+        </div>
+      )}
     </Card>
   );
 };
