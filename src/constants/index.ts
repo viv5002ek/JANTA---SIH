@@ -68,12 +68,14 @@ export const REPORT_STATUS = {
   submitted: 'Submitted',
   in_progress: 'In Progress',
   resolved: 'Resolved',
-  false_complaint: 'False Complaint'
+  false_complaint: 'False Complaint',
+  withdrawn: 'Withdrawn'
 };
 
 export const STATUS_COLORS = {
   submitted: 'bg-yellow-100 text-yellow-800',
   in_progress: 'bg-blue-100 text-blue-800',
   resolved: 'bg-green-100 text-green-800',
-  false_complaint: 'bg-red-100 text-red-800'
+  false_complaint: 'bg-red-100 text-red-800',
+  withdrawn: 'bg-gray-100 text-gray-800'
 };

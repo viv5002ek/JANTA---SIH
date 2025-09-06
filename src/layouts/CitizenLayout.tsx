@@ -1,15 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { CitizenSidebar } from '../components/layout/CitizenSidebar';
 
 export const CitizenLayout: React.FC = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Header onMenuToggle={toggleMobileMenu} isMobileMenuOpen={isMobileMenuOpen} />
       <div className="flex">
-        <CitizenSidebar />
-        <main className="flex-1 p-6">
+        <CitizenSidebar isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
+        <main className="flex-1 p-4 sm:p-6 lg:ml-0">
           <Outlet />
         </main>
       </div>

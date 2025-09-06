@@ -8,12 +8,19 @@ import { Shield } from 'lucide-react';
 
 export const AdminLoginForm: React.FC = () => {
   const { signIn } = useAuth();
-  const [email, setEmail] = useState('vivek@gmail.com');
-  const [password, setPassword] = useState('admin');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check admin credentials
+    if (email !== 'vivek@gmail.com' || password !== 'admin') {
+      toast.error('Invalid admin credentials');
+      return;
+    }
+    
     setLoading(true);
     try {
       await signIn(email, password);
@@ -46,7 +53,6 @@ export const AdminLoginForm: React.FC = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
           placeholder="Enter admin email"
-          disabled
         />
         
         <Input
@@ -67,10 +73,11 @@ export const AdminLoginForm: React.FC = () => {
         </Button>
       </form>
 
-      <div className="mt-6 p-4 bg-purple-50 rounded-lg">
+      <div className="mt-6 p-3 bg-purple-50 rounded-lg">
         <p className="text-xs text-purple-700 text-center">
-          <strong>Secure Access:</strong> This is a restricted administrative interface.
-          All actions are logged and monitored.
+          <strong>Demo Credentials:</strong><br />
+          Email: vivek@gmail.com<br />
+          Password: admin
         </p>
       </div>
     </Card>

@@ -10,6 +10,7 @@ interface AuthContextType {
   userProfile: UserProfile | null;
   publicAdminData: PublicAdmin | null;
   loading: boolean;
+  supabase: typeof supabase;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -155,6 +156,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     userProfile,
     publicAdminData,
     loading,
+    supabase,
     signIn,
     signUp,
     signOut,
