@@ -23,27 +23,23 @@ export const AdminDashboard: React.FC = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [reportsRes, adminsRes] = await Promise.all([
-        supabase.from('reports').select('*').order('created_at', { ascending: false }).limit(10),
+      const [reportsRes, adminsRes, allReportsRes] = await Promise.all([
+        supabase.from('reports').select('*').order('created_at', { ascending: false }),
         supabase.from('public_admins').select('*').eq('is_active', true)
       ]);
 
-      const reportsData = reportsRes.data || [];
+      const allReportsData = reportsRes.data || [];
       const adminsData = adminsRes.data || [];
 
-      setReports(reportsData);
+      setReports(allReportsData.slice(0, 10)); // Show latest 10 in dashboard
       setPublicAdmins(adminsData);
 
       // Calculate stats
-      const totalReportsRes = await supabase.from('reports').select('id', { count: 'exact' });
-      const resolvedReportsRes = await supabase.from('reports').select('id', { count: 'exact' }).eq('status', 'resolved');
-      const pendingReportsRes = await supabase.from('reports').select('id', { count: 'exact' }).eq('status', 'submitted');
-
       setStats({
-        totalReports: totalReportsRes.count || 0,
+        totalReports: allReportsData.length,
         activeAdmins: adminsData.length,
-        resolvedReports: resolvedReportsRes.count || 0,
-        pendingReports: pendingReportsRes.count || 0
+        resolvedReports: allReportsData.filter(r => r.status === 'resolved').length,
+        pendingReports: allReportsData.filter(r => r.status === 'submitted').length
       });
     } catch (error: any) {
       console.error('Error fetching dashboard data:', error.message);
@@ -118,7 +114,12 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Recent Reports */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Reports</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-gray-900">All Reports</h2>
+          <div className="text-sm text-gray-500">
+            Total: {stats.totalReports} reports
+          </div>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {reports.map((report) => (
             <motion.div

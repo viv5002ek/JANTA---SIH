@@ -13,6 +13,7 @@ import { PublicAdminLayout } from './layouts/PublicAdminLayout';
 
 // Import pages
 import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { AllReports } from './pages/admin/AllReports';
 import { ManageAdmins } from './pages/admin/ManageAdmins';
 import { ReassignmentRequests } from './pages/admin/ReassignmentRequests';
 import { SystemAnalytics } from './pages/admin/SystemAnalytics';
@@ -50,6 +51,7 @@ const AppContent: React.FC = () => {
       {userRole === 'admin' && (
         <Route path="/admin/*" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
+          <Route path="all-reports" element={<AllReports />} />
           <Route path="manage-admins" element={<ManageAdmins />} />
           <Route path="reassignment-requests" element={<ReassignmentRequests />} />
           <Route path="analytics" element={<SystemAnalytics />} />

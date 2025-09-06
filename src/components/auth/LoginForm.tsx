@@ -25,22 +25,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ mode, onToggleMode, formTy
     e.preventDefault();
     setLoading(true);
     try {
-      // For public admin, check if they exist in public_admins table
-      if (mode === 'public_admin') {
-        const { data: publicAdmin } = await supabase
-          .from('public_admins')
-          .select('*')
-          .eq('email', email)
-          .eq('is_active', true)
-          .single();
-
-        if (!publicAdmin) {
-          toast.error('You are not authorized as a public admin. Contact the administrator.');
-          setLoading(false);
-          return;
-        }
-      }
-      
       await signIn(email, password);
     } catch (error) {
       // Error handled by context
@@ -130,7 +114,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ mode, onToggleMode, formTy
           <p className="text-xs text-blue-700 text-center leading-relaxed">
             <strong>Demo Credentials:</strong><br />
             Email: admin@ranchi.gov.in<br />
-            Password: Create account first<br />
+            Password: password123<br />
             <span className="text-blue-600">Note: Public Admin accounts must be activated by the State Administrator.</span>
           </p>
         </div>

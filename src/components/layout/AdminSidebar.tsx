@@ -6,11 +6,13 @@ import {
   Users, 
   RefreshCw, 
   BarChart3,
+  FileText,
   Shield
 } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { name: 'All Reports', href: '/admin/all-reports', icon: FileText },
   { name: 'Manage Admins', href: '/admin/manage-admins', icon: Users },
   { name: 'Reassignment Requests', href: '/admin/reassignment-requests', icon: RefreshCw },
   { name: 'System Analytics', href: '/admin/analytics', icon: BarChart3 },

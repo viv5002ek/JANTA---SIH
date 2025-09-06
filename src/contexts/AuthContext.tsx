@@ -62,37 +62,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const determineUserRole = async (user: User) => {
-    // Check if admin
-    if (user.email === 'vivek@gmail.com') {
-      setUserRole('admin');
-      return;
-    }
-
-    // Check if public admin
-    const { data: publicAdmin } = await supabase
-      .from('public_admins')
-      .select('*')
-      .eq('email', user.email)
-      .eq('is_active', true)
-      .single();
-
-    if (publicAdmin) {
-      setUserRole('public_admin');
-      setPublicAdminData(publicAdmin);
-      return;
-    }
-
-    // Default to citizen
-    setUserRole('citizen');
-    
-    // Fetch user profile
+    // Fetch user profile first
     const { data: profile } = await supabase
       .from('user_profiles')
       .select('*')
       .eq('id', user.id)
       .single();
 
-    setUserProfile(profile);
+    if (profile) {
+      setUserProfile(profile);
+      setUserRole(profile.user_role as UserRole);
+      
+      // If public admin, fetch their admin data
+      if (profile.user_role === 'public_admin') {
+        const { data: publicAdmin } = await supabase
+          .from('public_admins')
+          .select('*')
+          .eq('email', user.email)
+          .eq('is_active', true)
+          .single();
+        
+        setPublicAdminData(publicAdmin);
+      }
+    } else {
+      // Create profile if it doesn't exist
+      const newProfile = {
+        id: user.id,
+        email: user.email!,
+        name: '',
+        user_role: user.email === 'vivek@gmail.com' ? 'admin' : 'citizen'
+      };
+      
+      const { error } = await supabase
+        .from('user_profiles')
+        .insert([newProfile]);
+      
+      if (!error) {
+        setUserProfile(newProfile as UserProfile);
+        setUserRole(newProfile.user_role as UserRole);
+      }
+    }
   };
 
   const signIn = async (email: string, password: string) => {
