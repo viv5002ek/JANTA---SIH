@@ -19,8 +19,8 @@ import { SystemAnalytics } from './pages/admin/SystemAnalytics';
 
 import { CitizenDashboard } from './pages/citizen/CitizenDashboard';
 import { MyReports } from './pages/citizen/MyReports';
-import { NearbyReports } from './pages/citizen/NearbyReports';
 import { ReportIssue } from './pages/citizen/ReportIssue';
+import { CitizenProfile } from './pages/citizen/CitizenProfile';
 
 import { PublicAdminDashboard } from './pages/publicAdmin/PublicAdminDashboard';
 import { AssignedReports } from './pages/publicAdmin/AssignedReports';
@@ -70,8 +70,8 @@ const AppContent: React.FC = () => {
         <Route path="/user/*" element={<CitizenLayout />}>
           <Route index element={<CitizenDashboard />} />
           <Route path="my-reports" element={<MyReports />} />
-          <Route path="nearby" element={<NearbyReports />} />
           <Route path="report" element={<ReportIssue />} />
+          <Route path="profile" element={<CitizenProfile />} />
         </Route>
       )}
 

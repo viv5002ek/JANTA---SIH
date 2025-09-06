@@ -124,13 +124,12 @@ export const AuthPage: React.FC = () => {
             transition={{ duration: 0.3 }}
           >
             {authMode === 'admin' ? (
-              <AdminLoginForm authMode={authMode} />
+              <AdminLoginForm />
             ) : authMode === 'public_admin' ? (
               <LoginForm 
                 mode="public_admin"
                 onToggleMode={() => setFormType(formType === 'login' ? 'signup' : 'login')}
                 formType={formType}
-                authMode={authMode}
               />
             ) : (
               // Citizen mode
@@ -139,7 +138,6 @@ export const AuthPage: React.FC = () => {
                   mode="citizen"
                   onToggleMode={() => setFormType('signup')}
                   formType={formType}
-                  authMode={authMode}
                 />
               ) : (
                 <SignupForm onToggleMode={() => setFormType('login')} />

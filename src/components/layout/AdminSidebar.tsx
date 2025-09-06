@@ -16,9 +16,28 @@ const navigation = [
   { name: 'System Analytics', href: '/admin/analytics', icon: BarChart3 },
 ];
 
-export const AdminSidebar: React.FC = () => {
+interface AdminSidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen = true, onClose }) => {
   return (
-    <div className="w-64 bg-white shadow-sm border-r border-gray-200 min-h-screen">
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+      
+      {/* Sidebar */}
+      <div className={`
+        fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white shadow-sm border-r border-gray-200 min-h-screen
+        transform transition-transform duration-300 ease-in-out lg:transform-none
+        ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
       <div className="p-6">
         <div className="flex items-center space-x-3 mb-8">
           <div className="bg-purple-600 p-2 rounded-lg">
@@ -43,6 +62,7 @@ export const AdminSidebar: React.FC = () => {
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`
               }
+              onClick={onClose}
             >
               {({ isActive }) => (
                 <>
@@ -61,5 +81,6 @@ export const AdminSidebar: React.FC = () => {
         </nav>
       </div>
     </div>
+    </>
   );
 };
